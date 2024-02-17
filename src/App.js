@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
-
+import React, { useState, useCallback } from 'react';
+import { useDropzone } from 'react-dropzone';
+import { Modal, Button } from 'react-bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
 class ThumbCache {
   constructor() {
     this.images = [];
@@ -87,28 +89,77 @@ class ThumbCache {
     });
   }
 }
-
 function App() {
   const [images, setImages] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
   const thumbCache = new ThumbCache();
 
-  const handleFileUpload = async (event) => {
-    const file = event.target.files[0];
-    if (file) {
+  const processFile = async (file) => {
+    try {
       const arrayBuffer = await file.arrayBuffer();
       await thumbCache.parseDBFile(arrayBuffer);
-      setImages([...thumbCache.images]);
+      setImages((prevImages) => [...prevImages, ...thumbCache.images]);
+    } catch (error) {
+      console.error(`Error processing file ${file.name}: `, error);
     }
+  };
+
+  const onDrop = useCallback((acceptedFiles) => {
+    acceptedFiles.forEach((file) => processFile(file));
+  }, []);
+
+  const { getRootProps, getInputProps } = useDropzone({
+    onDrop,
+    accept: '.db'
+  });
+
+  const handleImageClick = (image) => {
+    setSelectedImage(image);
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setSelectedImage(null);
   };
 
   return (
     <div>
-      <input type="file" accept=".db" onChange={handleFileUpload} />
-      <div>
-        {images.map((image, index) => (
-          <img key={index} src={image.src} alt={`Image ${index}`} />
-        ))}
+      <div {...getRootProps()} className="dropzone" style={{ border: '2px dashed #007bff', padding: '20px', textAlign: 'center' }}>
+        <input {...getInputProps()} />
+        <p>Drag 'n' drop some files here, or click to select files</p>
       </div>
+      <div>
+        <center>
+          {images.map((image, index) => (
+            <img
+              key={index}
+              src={image.src}
+              alt={`Image ${index}`}
+              width={"300"}
+              height={"300"}
+              onClick={() => handleImageClick(image)}
+              style={{ cursor: 'pointer' }}
+            />
+          ))}
+        </center>
+      </div>
+
+      <Modal show={showModal} onHide={handleCloseModal} size="lg" centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Image Preview</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {selectedImage && <img src={selectedImage.src} alt="Full Size" style={{ width: '100%' }} />}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseModal}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
     </div>
   );
 }
