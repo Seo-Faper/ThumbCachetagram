@@ -185,9 +185,7 @@ const App = () => {
                 </div>
 
                 <div className="profile-user-settings">
-                  <h1 className="profile-user-name">ThumbChache Viewer</h1>
-
-                  <button className="btn profile-edit-btn">select files</button>
+                  <h1 className="profile-user-name">ThumbCache Viewer</h1>
                 </div>
 
                 <div className="profile-stats">
@@ -211,7 +209,7 @@ const App = () => {
                 <div className="profile-bio">
                   <p>
                     <span className="profile-real-name">
-                      ThumbChache_##.db File Path
+                      ThumbCache_##.db File Path
                     </span>{" "}
                     <CodeBlock
                       theme={github}

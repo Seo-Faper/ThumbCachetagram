@@ -13,7 +13,7 @@ const Profile = () => {
           </div>
 
           <div className="profile-user-settings">
-            <h1 className="profile-user-name">ThumbChache Viewer</h1>
+            <h1 className="profile-user-name">ThumbCache Viewer</h1>
 
             <button className="btn profile-edit-btn">Edit Profile</button>
 
@@ -42,7 +42,7 @@ const Profile = () => {
           <div className="profile-bio">
             <p>
               <span className="profile-real-name">
-                ThumbChache_##.db File Path
+                ThumbCache_##.db File Path
               </span>{" "}
               <CodeBlock
                 theme={github}
